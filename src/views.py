@@ -18,7 +18,7 @@ KODESMIL_ACTIVITY_URL = 'http://172.21.0.2:5001/activities'
 @marshal_with(ActivityPointsSchema())
 @content.route('/points', methods=['POST'])
 @requires_auth
-def add_new_points(*args, **kwargs):
+def add_new_points(user_id):
     headers = {
         'Content-Type': 'application/json',
         'Authorization': '{}'.format(request.headers.get('Authorization'))
@@ -29,7 +29,6 @@ def add_new_points(*args, **kwargs):
     )
 
     json_response = response.json()
-    user_id = kwargs['user_id']
 
     instance = ActivityPointsSchema().load(
         {
@@ -50,8 +49,7 @@ def add_new_points(*args, **kwargs):
 @marshal_with(ActivityPointsSchema())
 @content.route('/points', methods=['GET'])
 @requires_auth
-def get_points(*args, **kwargs):
-    user_id = kwargs['user_id']
+def get_points(user_id):
     schema = ActivityPointsSchema(many=True)
     instances = schema.dump(
         db.points.find({'user_id': user_id})
